@@ -1,14 +1,14 @@
-var invariant = require('invariant');
+const invariant = require('invariant');
 
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-var splice = Array.prototype.splice;
+const hasOwnProperty = Object.prototype.hasOwnProperty;
+const splice = Array.prototype.splice;
 
-var toString = Object.prototype.toString
-var type = function(obj) {
+const toString = Object.prototype.toString;
+const type = function(obj) {
   return toString.call(obj).slice(8, -1);
-}
+};
 
-var assign = Object.assign || /* istanbul ignore next */ function assign(target, source) {
+const assign = Object.assign || /* istanbul ignore next */ function assign(target, source) {
     getAllKeys(source).forEach(function(key) {
       if (hasOwnProperty.call(source, key)) {
         target[key] = source[key];
@@ -17,7 +17,7 @@ var assign = Object.assign || /* istanbul ignore next */ function assign(target,
     return target;
   };
 
-var getAllKeys = typeof Object.getOwnPropertySymbols === 'function' ?
+const getAllKeys = typeof Object.getOwnPropertySymbols === 'function' ?
   function(obj) { return Object.keys(obj).concat(Object.getOwnPropertySymbols(obj)) } :
   /* istanbul ignore next */ function(obj) { return Object.keys(obj) };
 
@@ -38,7 +38,7 @@ function copy(object) {
 }
 
 function newContext() {
-  var commands = assign({}, defaultCommands);
+  const commands = assign({}, defaultCommands);
   update.extend = function(directive, fn) {
     commands[directive] = fn;
   };
@@ -64,17 +64,17 @@ function update(object, spec) {
       Object.keys(commands).join(', ')
     );
 
-    var nextObject = object;
-    var index, key;
+    let nextObject = object;
+    let index, key;
     getAllKeys(spec).forEach(function(key) {
       if (hasOwnProperty.call(commands, key)) {
-        var objectWasNextObject = object === nextObject;
+        const objectWasNextObject = object === nextObject;
         nextObject = commands[key](spec[key], nextObject, spec, object);
         if (objectWasNextObject && update.isEquals(nextObject, object)) {
           nextObject = object;
         }
       } else {
-        var nextValueForKey = update(object[key], spec[key]);
+        const nextValueForKey = update(object[key], spec[key]);
         if (!update.isEquals(nextValueForKey, nextObject[key]) || typeof nextValueForKey === 'undefined' && !hasOwnProperty.call(object, key)) {
           if (nextObject === object) {
             nextObject = copy(object);
@@ -82,13 +82,13 @@ function update(object, spec) {
           nextObject[key] = nextValueForKey;
         }
       }
-    })
+    });
     return nextObject;
   }
 
 }
 
-var defaultCommands = {
+const defaultCommands = {
   $push: function(value, nextObject, spec) {
     invariantPushAndUnshift(nextObject, spec, '$push');
     return value.length ? nextObject.concat(value) : nextObject;
@@ -112,7 +112,7 @@ var defaultCommands = {
   },
   $toggle: function(targets, nextObject) {
     invariantSpecArray(targets, '$toggle');
-    var nextObjectCopy = targets.length ? copy(nextObject) : nextObject;
+    const nextObjectCopy = targets.length ? copy(nextObject) : nextObject;
 
     targets.forEach(function(target) {
       nextObjectCopy[target] = !nextObject[target];
@@ -135,8 +135,8 @@ var defaultCommands = {
     invariantSpecArray(value, '$add');
     if (type(nextObject) === 'Map') {
       value.forEach(function(pair) {
-        var key = pair[0];
-        var value = pair[1];
+        const key = pair[0];
+        const value = pair[1];
         if (nextObject === originalObject && nextObject.get(key) !== value) nextObject = copy(originalObject);
         nextObject.set(key, value);
       });
@@ -245,7 +245,7 @@ function invariantMerge(target, specValue) {
 }
 
 function invariantMapOrSet(target, command) {
-  var typeOfTarget = type(target);
+  const typeOfTarget = type(target);
   invariant(
     typeOfTarget === 'Map' || typeOfTarget === 'Set',
     'update(): %s expects a target of type Set or Map; got %s',
