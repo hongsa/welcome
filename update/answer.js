@@ -30,7 +30,7 @@ function copy(object) {
   } else if (type(object) === 'Set') {
     return new Set(object)
   } else if (object && typeof object === 'object') {
-    var prototype = object.constructor && object.constructor.prototype
+    const prototype = object.constructor && object.constructor.prototype
     return assign(Object.create(prototype || null), object);
   } else {
     return object;
